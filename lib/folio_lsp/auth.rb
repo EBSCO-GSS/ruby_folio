@@ -68,11 +68,6 @@ module EBSCO
         def create_okapi_token
           #if blank?(@okapi_token)
 
-            puts 'OKAPI TENANT: ' + @okapi_tenant
-            puts 'OKAPI USER: ' + @user
-            puts 'OKAPI PASS: ' + @pass
-            puts 'OKAPI URL: ' + 'https://' + @okapi_host + @config[:auth_path]
-
             response = RestClient.post 'https://' + @okapi_host + @config[:auth_path], '{"username": "' + @user + '","password": "' + @pass + '"}', {:'x-okapi-tenant' => @okapi_tenant, :accept => :json, :content_type => :json}
  
             puts response.code
