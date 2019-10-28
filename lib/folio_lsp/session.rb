@@ -5,7 +5,7 @@ require 'folio_lsp/configuration'
 module EBSCO
   module FOLIO
     
-    class Auth
+    class Session
         # The authentication token.  This is passed along in the x-okapi-token HTTP header for every call.
         attr_accessor :okapi_token
         attr_reader :config
@@ -47,35 +47,30 @@ module EBSCO
             @okapi_host = ENV['OKAPI_HOST']
           end
 
-          #okapi-snd-us-east-1.folio.ebsco.com
-          
-          # puts options
-          # puts "USER: " + @user
-          # puts "PASS: " + @pass
-
           if options.has_key? :okapi_token
             @okapi_token = options[:okapi_token]
           else
             @okapi_token = create_okapi_token
           end 
 
-          # if @debug
-          #   puts '*** OKAPI TOKEN: ' + @okapi_token.inspect
-          # end
-
         end
 
         def create_okapi_token
-          #if blank?(@okapi_token)
 
+          @okapi_token = ENV['OKAPI_TOKEN'] || ''
+          if (@okapi_token.empty?)
             response = RestClient.post 'https://' + @okapi_host + @config[:auth_path], '{"username": "' + @user + '","password": "' + @pass + '"}', {:'x-okapi-tenant' => @okapi_tenant, :accept => :json, :content_type => :json}
- 
-            puts response.code
-            puts response.headers
-            puts response.body
-          #end
-          @okapi_token = response.headers[:x_okapi_token]
+            @okapi_token = response.headers[:x_okapi_token]
+          end
+
+          ENV['OKAPI_TOKEN'] = @okapi_token
           @okapi_token
+
+        end
+
+        def get_rtac(mmid = '')
+          response = RestClient.get 'https://' + @okapi_host + @config[:rtac_path] + mmid, {:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
+          response
         end
 
     end
