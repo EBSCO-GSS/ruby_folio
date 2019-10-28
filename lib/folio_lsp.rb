@@ -1,4 +1,4 @@
-require 'folio_lsp/auth'
+require 'folio_lsp/session'
 
 module EBSCO
 

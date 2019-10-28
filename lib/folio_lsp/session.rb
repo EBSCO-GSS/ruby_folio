@@ -70,7 +70,8 @@ module EBSCO
 
         def get_rtac(mmid = '')
           response = RestClient.get 'https://' + @okapi_host + @config[:rtac_path] + mmid, {:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
-          response
+          rtac_hash = JSON.parse(response)
+          rtac_hash
         end
 
     end
