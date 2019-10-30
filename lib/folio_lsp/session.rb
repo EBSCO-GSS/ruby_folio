@@ -1,5 +1,6 @@
 require 'rest-client'
 require 'json'
+require 'time'
 require 'folio_lsp/configuration'
 
 module EBSCO
@@ -72,6 +73,31 @@ module EBSCO
           response = RestClient.get 'https://' + @okapi_host + @config[:rtac_path] + mmid, {:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
           rtac_hash = JSON.parse(response)
           rtac_hash
+        end
+
+        def place_hold(hold_details = {})
+          if (hold_details.has_key? :userId) && (hold_details.has_key? :instanceId) && (hold_details.has_key? :pickupLocationId)
+            current_time = Time.now.iso8601
+            if hold_details.key?("expirationDate")
+              endDate = Time.parse(hold_details[:endDate]).iso8601
+            else
+              endDate = (Time.now + (2*7*24*60*60)).iso8601
+            end
+            request_body = Hash.new
+            request_body[ "requestDate" ] = current_time
+            request_body[ "expirationDate" ] = endDate
+            request_body[ "pickupLocationId" ] = hold_details[:pickupLocationId]
+            request_body[ "item" ] = {}
+            request_body[ "item" ][ "instanceId" ] = hold_details[:instanceId]
+            request_path = config[:title_hold_path]
+            request_path.sub! '{userId}', hold_details[:userId]
+            request_path.sub! '{instanceId}', hold_details[:instanceId]
+            raw_response = RestClient.post 'https://' + @okapi_host + request_path, request_body.to_json,{:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
+            response = JSON.parse(raw_response)
+          else
+            response = hold_details
+          end
+          response
         end
 
     end
