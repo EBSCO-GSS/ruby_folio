@@ -16,4 +16,5 @@ Gem::Specification.new do |s|
   s.files        += Dir.glob('lib/**/*')
   s.homepage    = 'https://github.com/EBSCO-GSS/ruby_folio'
   s.license     = 'MIT'
+  s.add_development_dependency 'rest-client', '~> 2.1.0'
 end
