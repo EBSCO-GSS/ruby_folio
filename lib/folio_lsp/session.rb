@@ -100,6 +100,23 @@ module EBSCO
           response
         end
 
+        def cancel_hold(hold_details = {})
+          if (hold_details.has_key? :userId) && (hold_details.has_key? :itemId) && (hold_details.has_key? :holdId)
+
+            request_path = config[:cancel_hold_path]
+            request_path.sub! '{userId}', hold_details[:userId]
+            request_path.sub! '{itemId}', hold_details[:itemId]
+            request_path.sub! '{holdId}', hold_details[:holdId]
+
+            raw_response = RestClient.delete 'https://' + @okapi_host + request_path, {:'x-okapi-token' => @okapi_token, :accept => 'text/plain'}
+
+            response = 'Success'
+          else
+            response = hold_details
+          end
+          response
+        end
+
     end
 
   end
