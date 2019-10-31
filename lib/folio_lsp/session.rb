@@ -87,6 +87,18 @@ module EBSCO
           checkouts_hash
         end
 
+        def view_checkout_history(userId = '')
+          response = RestClient.get 'https://' + @okapi_host + @config[:loans_path] + '?offset=0&limit=100&query=' + URI.escape('(userId=' + userId + ' AND status="Closed")'), {:'x-okapi-token' => @okapi_token, :accept => :json}
+          checkouts_hash = JSON.parse(response)
+          checkouts_hash
+        end
+
+        def view_requests(userId = '')
+          response = RestClient.get 'https://' + @okapi_host + @config[:requests_path] + '?offset=0&limit=100&query=' + URI.escape('(requesterId="' + userId + '" and status=("Open - Awaiting pickup" or "Open - Not yet filled" or "Open - In transit"))'), {:'x-okapi-token' => @okapi_token, :accept => :json}
+          requests_hash = JSON.parse(response)
+          requests_hash
+        end
+
         def place_hold(hold_details = {})
           if (hold_details.has_key? :userId) && (hold_details.has_key? :instanceId) && (hold_details.has_key? :pickupLocationId)
             current_time = Time.now.iso8601
