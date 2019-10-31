@@ -20,6 +20,7 @@ module EBSCO
             :title_hold_path => '/patron/account/{userId}/instance/{instanceId}/hold',
             :cancel_hold_path => '/patron/account/{userId}/item/{itemId}/hold/{holdId}',
             :service_points_path => '/service-points',
+            :loans_path => '/circulation/loans',
             :user_agent => 'EBSCO FOLIO GEM v0.0.1',
             :log => 'faraday.log',
             :log_level => 'INFO',
