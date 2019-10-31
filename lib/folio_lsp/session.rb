@@ -75,6 +75,12 @@ module EBSCO
           rtac_hash
         end
 
+        def get_pickup_locations()
+          response = RestClient.get 'https://' + @okapi_host + @config[:service_points_path] + '?query=' + URI.escape("(pickupLocation==true)"), {:'x-okapi-token' => @okapi_token, :accept => :json} 
+          pul_hash = JSON.parse(response)
+          pul_hash
+        end
+
         def place_hold(hold_details = {})
           if (hold_details.has_key? :userId) && (hold_details.has_key? :instanceId) && (hold_details.has_key? :pickupLocationId)
             current_time = Time.now.iso8601
