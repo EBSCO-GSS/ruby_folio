@@ -116,7 +116,11 @@ module EBSCO
             request_path = config[:title_hold_path]
             request_path.sub! '{userId}', hold_details[:userId]
             request_path.sub! '{instanceId}', hold_details[:instanceId]
-            raw_response = RestClient.post 'https://' + @okapi_host + request_path, request_body.to_json,{:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
+            begin
+              raw_response = RestClient.post 'https://' + @okapi_host + request_path, request_body.to_json,{:'x-okapi-token' => @okapi_token, :accept => :json, :content_type => :json}
+            rescue RestClient::ExceptionWithResponse => e
+              return {"error" => "You already have a hold on this item"}
+            end
             response = JSON.parse(raw_response)
           else
             response = hold_details
